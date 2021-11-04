@@ -2,3 +2,4 @@ starlette==0.14.2
 pillow==8.2.0
 numpy>=1.18.0
 pydantic==1.8.1
+requests==2.26.0
