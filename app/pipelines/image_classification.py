@@ -6,4 +6,4 @@ class ImageClassificationPipeline(Pipeline):
         self.model_id = model_id
 
     def __call__(self, inputs):
-        return [{'XXX': .90}, {'YYY': .10}]
+        return [{"XXX": 0.90}, {"YYY": 0.10}]

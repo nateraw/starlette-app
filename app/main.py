@@ -1,20 +1,20 @@
 import functools
 import logging
 import os
-from typing import Dict, Type, Any, Tuple
+import time
+from io import BytesIO
+from typing import Any, Dict, Tuple, Type
 
-# from api_inference_community.routes import pipeline_route, status_ok
-from app.pipelines import Pipeline, ImageClassificationPipeline
-from app.pipelines.image_classification import ImageClassificationPipeline
+from PIL import Image
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
 from starlette.middleware.gzip import GZipMiddleware
-from starlette.routing import Route
-from starlette.responses import JSONResponse, Response
 from starlette.requests import Request
-import time
-from io import BytesIO
-from PIL import Image
+from starlette.responses import JSONResponse, Response
+from starlette.routing import Route
+
+from app.pipelines import ImageClassificationPipeline, Pipeline
+from app.pipelines.image_classification import ImageClassificationPipeline
 
 TASK = os.getenv("TASK")
 MODEL_ID = os.getenv("MODEL_ID")
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 ALLOWED_TASKS: Dict[str, Type[Pipeline]] = {
-    'image-classification': ImageClassificationPipeline
+    "image-classification": ImageClassificationPipeline
 }
 
 
@@ -120,15 +120,13 @@ async def startup_event():
     handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
     logger.handlers = [handler]
 
-    # Link between `api-inference-community` and framework code.
+    # Init pipeline from env variables
     app.get_pipeline = get_pipeline
     try:
         get_pipeline()
     except Exception as e:
         # We can fail so we can show exception later.
-        # raise RuntimeError("UGH!!")
-        print(str(e))
-        raise RuntimeError(str(e))
+        pass
 
 
 if __name__ == "__main__":
@@ -136,4 +134,4 @@ if __name__ == "__main__":
         get_pipeline()
     except Exception:
         # We can fail so we can show exception later.
-        raise RuntimeError("UGH from __main__!")
+        pass
